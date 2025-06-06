@@ -215,7 +215,7 @@ const Index = () => {
               </div>
               <div className="ml-4">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent">
-                  ระบบเบิกเงินสดเงินเดือน
+                ระบบเบิกเงินสดเงินเดือน Bangkok Soap
                 </h1>
                 <p className="text-gray-600 mt-1">คำนวณและแยกธนบัตรอัตโนมัติ</p>
               </div>
