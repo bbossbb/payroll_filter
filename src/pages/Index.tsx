@@ -344,7 +344,7 @@ const Index = () => {
       <footer className="bg-white/80 backdrop-blur-sm border-t border-blue-200/50 py-8 mt-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-gray-500">
-            © {new Date().getFullYear()} ระบบเบิกเงินสดเงินเดือน
+            © {new Date().getFullYear()} ระบบเบิกเงินสดเงินเดือน Bangkok Soap
           </p>
         </div>
       </footer>
