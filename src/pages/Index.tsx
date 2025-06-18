@@ -125,14 +125,28 @@ const Index = () => {
       console.log(`100: ${count} notes/coins, remaining: ${remainingAmount}`);
     }
 
+    // Special handling for 85 baht - use four 20s and one 5
+    if (remainingAmount === 85) {
+      result['20'] = 4;
+      result['5'] = 1;
+      remainingAmount = 0;
+      console.log(`Special case 85: using 4×20 + 1×5 notes, remaining: ${remainingAmount}`);
+    }
     // Special handling for 80 baht - use four 20s instead of 50+20+10
-    if (remainingAmount === 80) {
+    else if (remainingAmount === 80) {
       result['20'] = 4;
       remainingAmount = 0;
       console.log(`Special case 80: using 4×20 notes, remaining: ${remainingAmount}`);
     }
+    // Special handling for 65 baht - use three 20s and one 5
+    else if (remainingAmount === 65) {
+      result['20'] = 3;
+      result['5'] = 1;
+      remainingAmount = 0;
+      console.log(`Special case 65: using 3×20 + 1×5 notes, remaining: ${remainingAmount}`);
+    }
     // Special handling for 60 baht - use three 20s instead of 50+10
-    if (remainingAmount === 60) {
+    else if (remainingAmount === 60) {
       result['20'] = 3;
       remainingAmount = 0;
       console.log(`Special case 60: using 3×20 notes, remaining: ${remainingAmount}`);
