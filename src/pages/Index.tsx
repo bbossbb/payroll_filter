@@ -84,22 +84,12 @@ const Index = () => {
     return rounded;
   };
 
-  // Calculate banknote breakdown - fixed to handle whole numbers properly
+  // Calculate banknote breakdown - with special handling for 60 and 80 baht
   const calculateBanknoteBreakdown = (amount: number) => {
     console.log(`Calculating breakdown for: ${amount}`);
     
     // Work with whole numbers only since we don't use 0.5 baht coins
     let remainingAmount = Math.round(amount);
-    
-    const denominations = [
-      { value: 1000, key: '1000' },
-      { value: 500, key: '500' },
-      { value: 100, key: '100' },
-      { value: 50, key: '50' },
-      { value: 20, key: '20' },
-      { value: 10, key: '10' },
-      { value: 5, key: '5' },
-    ];
     
     const result = {
       '1000': 0,
@@ -111,13 +101,57 @@ const Index = () => {
       '5': 0,
     };
 
-    // Process each denomination
-    for (const denom of denominations) {
-      const count = Math.floor(remainingAmount / denom.value);
-      if (count > 0) {
-        result[denom.key as keyof typeof result] = count;
-        remainingAmount -= count * denom.value;
-        console.log(`${denom.key}: ${count} notes/coins, remaining: ${remainingAmount}`);
+    // Process 1000s first
+    if (remainingAmount >= 1000) {
+      const count = Math.floor(remainingAmount / 1000);
+      result['1000'] = count;
+      remainingAmount -= count * 1000;
+      console.log(`1000: ${count} notes/coins, remaining: ${remainingAmount}`);
+    }
+
+    // Process 500s
+    if (remainingAmount >= 500) {
+      const count = Math.floor(remainingAmount / 500);
+      result['500'] = count;
+      remainingAmount -= count * 500;
+      console.log(`500: ${count} notes/coins, remaining: ${remainingAmount}`);
+    }
+
+    // Process 100s
+    if (remainingAmount >= 100) {
+      const count = Math.floor(remainingAmount / 100);
+      result['100'] = count;
+      remainingAmount -= count * 100;
+      console.log(`100: ${count} notes/coins, remaining: ${remainingAmount}`);
+    }
+
+    // Special handling for 80 baht - use four 20s instead of 50+20+10
+    if (remainingAmount === 80) {
+      result['20'] = 4;
+      remainingAmount = 0;
+      console.log(`Special case 80: using 4×20 notes, remaining: ${remainingAmount}`);
+    }
+    // Special handling for 60 baht - use three 20s instead of 50+10
+    if (remainingAmount === 60) {
+      result['20'] = 3;
+      remainingAmount = 0;
+      console.log(`Special case 60: using 3×20 notes, remaining: ${remainingAmount}`);
+    } else {
+      // Process remaining denominations normally
+      const denominations = [
+        { value: 50, key: '50' },
+        { value: 20, key: '20' },
+        { value: 10, key: '10' },
+        { value: 5, key: '5' },
+      ];
+      
+      for (const denom of denominations) {
+        if (remainingAmount >= denom.value) {
+          const count = Math.floor(remainingAmount / denom.value);
+          result[denom.key as keyof typeof result] += count;
+          remainingAmount -= count * denom.value;
+          console.log(`${denom.key}: ${count} notes/coins, remaining: ${remainingAmount}`);
+        }
       }
     }
     
@@ -158,7 +192,7 @@ const Index = () => {
           <style>
             @media print {
               @page { 
-                margin: 1.2cm; 
+                margin: 0.8cm; 
                 size: A4;
               }
               body { 
@@ -166,23 +200,23 @@ const Index = () => {
                 margin: 0; 
                 padding: 0;
                 color: #1a202c;
-                line-height: 1.3;
+                line-height: 1.2;
                 background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
               }
               .container {
                 max-width: 100%;
                 margin: 0 auto;
-                padding: 20px;
+                padding: 15px;
                 background: white;
-                border-radius: 15px;
-                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.08);
               }
               .header {
                 text-align: center;
-                margin-bottom: 25px;
-                padding: 20px;
+                margin-bottom: 20px;
+                padding: 15px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 12px;
+                border-radius: 10px;
                 color: white;
                 position: relative;
                 overflow: hidden;
@@ -197,27 +231,27 @@ const Index = () => {
                 background: repeating-linear-gradient(
                   45deg,
                   transparent,
-                  transparent 8px,
-                  rgba(255,255,255,0.1) 8px,
-                  rgba(255,255,255,0.1) 16px
+                  transparent 6px,
+                  rgba(255,255,255,0.08) 6px,
+                  rgba(255,255,255,0.08) 12px
                 );
-                animation: float 20s linear infinite;
+                animation: float 15s linear infinite;
               }
               @keyframes float {
                 0% { transform: translate(-50%, -50%) rotate(0deg); }
                 100% { transform: translate(-50%, -50%) rotate(360deg); }
               }
               .header h1 {
-                font-size: 24px;
-                margin: 0 0 10px 0;
+                font-size: 20px;
+                margin: 0 0 8px 0;
                 font-weight: bold;
                 position: relative;
                 z-index: 1;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
               }
               .header p {
                 margin: 0;
-                font-size: 14px;
+                font-size: 12px;
                 position: relative;
                 z-index: 1;
                 opacity: 0.9;
@@ -225,14 +259,14 @@ const Index = () => {
               .main-content {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                margin-bottom: 20px;
+                gap: 15px;
+                margin-bottom: 15px;
               }
               .card {
                 background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-                border-radius: 12px;
-                padding: 18px;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+                border-radius: 10px;
+                padding: 15px;
+                box-shadow: 0 6px 15px rgba(0,0,0,0.05);
                 border: 1px solid #e2e8f0;
                 position: relative;
                 overflow: hidden;
@@ -243,69 +277,69 @@ const Index = () => {
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 3px;
+                height: 2px;
                 background: linear-gradient(90deg, #667eea, #764ba2);
               }
               .card h3 {
                 color: #2d3748;
-                font-size: 18px;
-                margin: 0 0 15px 0;
+                font-size: 16px;
+                margin: 0 0 12px 0;
                 font-weight: bold;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 6px;
               }
               .card h3::before {
                 content: '💰';
-                font-size: 18px;
+                font-size: 16px;
               }
               .summary-stats {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 12px;
-                margin-bottom: 15px;
+                gap: 10px;
+                margin-bottom: 12px;
               }
               .stat-card {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
-                padding: 12px;
-                border-radius: 8px;
+                padding: 10px;
+                border-radius: 6px;
                 text-align: center;
-                box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
               }
               .stat-label {
-                font-size: 11px;
+                font-size: 10px;
                 opacity: 0.9;
-                margin-bottom: 4px;
+                margin-bottom: 3px;
                 font-weight: 500;
               }
               .stat-value {
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: bold;
                 text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
               }
               .breakdown-grid {
                 display: grid;
-                gap: 8px;
+                gap: 6px;
               }
               .breakdown-item {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 10px 12px;
+                padding: 8px 10px;
                 background: white;
                 border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                border-radius: 6px;
+                box-shadow: 0 1px 6px rgba(0,0,0,0.03);
               }
               .denom-badge {
                 display: inline-flex;
                 align-items: center;
-                padding: 4px 10px;
-                border-radius: 6px;
+                padding: 3px 8px;
+                border-radius: 5px;
                 font-weight: bold;
-                font-size: 11px;
-                min-width: 50px;
+                font-size: 10px;
+                min-width: 45px;
                 justify-content: center;
                 text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
               }
@@ -319,16 +353,16 @@ const Index = () => {
               .breakdown-amount {
                 font-weight: 600;
                 color: #2d3748;
-                font-size: 12px;
+                font-size: 11px;
               }
               .summary-table {
                 width: 100%;
                 border-collapse: separate;
                 border-spacing: 0;
                 background: white;
-                border-radius: 8px;
+                border-radius: 6px;
                 overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                box-shadow: 0 1px 6px rgba(0,0,0,0.03);
               }
               .summary-table tr {
                 border-bottom: 1px solid #e2e8f0;
@@ -337,8 +371,8 @@ const Index = () => {
                 border-bottom: none;
               }
               .summary-table td {
-                padding: 10px 12px;
-                font-size: 13px;
+                padding: 8px 10px;
+                font-size: 12px;
               }
               .summary-table td:first-child {
                 font-weight: 600;
@@ -353,17 +387,17 @@ const Index = () => {
               }
               .footer {
                 text-align: center;
-                margin-top: 25px;
-                padding: 15px;
+                margin-top: 20px;
+                padding: 12px;
                 background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-                border-radius: 8px;
+                border-radius: 6px;
                 color: #4a5568;
-                font-size: 11px;
+                font-size: 10px;
                 border: 1px solid #e2e8f0;
               }
               .company-logo {
-                font-size: 24px;
-                margin-bottom: 5px;
+                font-size: 20px;
+                margin-bottom: 4px;
                 display: block;
               }
             }
